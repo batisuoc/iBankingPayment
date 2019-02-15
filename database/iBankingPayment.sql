@@ -40,3 +40,7 @@ create table opt (
 	constraint chk_status check(status = 0 or status = 1 or status = 2),
 	constraint fk_opt_trans foreign key (trans_id) references transaction(trans_id)
 );
+
+insert into bank_account values('batisuoc', 'Trinh Hằng Ước', '0798237964', 'zhenghengyue@gmail.com', '100000000');
+
+insert into account values('batisuoc', '123456');
