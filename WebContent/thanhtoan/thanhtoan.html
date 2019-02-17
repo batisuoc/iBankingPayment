@@ -1,0 +1,48 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Thanh toan</title>
+  <style>
+	.button {
+		background-color: #4CAF50;
+		border: none;
+		color: white;
+		padding: 15px 32px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 4px 2px;
+		cursor: pointer;
+	}
+  </style>
+</head>
+
+<body style="font-size:125%;font-family:Arial, Helvetica, sans-serif;">
+  <h1>Thanh toan</h1>
+
+  <form action="http://localhost:8080/iBanking/rest/services/checklogin2" method="">
+	<input type="text" placeholder="Name" name="name" disabled value=""/>
+	<br/><br/>
+	<input type="text" placeholder="Phone" name="phone" disabled value=""/>
+	<br/><br/>
+	<input type="text" placeholder="Email" name="email" disabled value=""/>
+	<br/><br/>
+	
+	<input type="text" placeholder="Student_ID" name="student_id" value=""/>
+	<br/><br/>
+	<input type="text" placeholder="Fee" name="school_fee" disabled value=""/>
+	<br/><br/>
+	<script>
+		function disableSubmit(){
+			if(!name && !phone && !email && !student_id && !school_fee)
+				return true;
+			else
+				return false;
+		}
+	</script>
+	<input type="submit" class="button" value="Submit" disabled="disableSubmit()"/>
+  </form>
+
+</body>
+</html>
