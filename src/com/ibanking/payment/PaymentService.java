@@ -49,7 +49,7 @@ public class PaymentService {
 					// Write your code here
 					String u = rs.getString("bank_id");
 					String p = rs.getString("password");
-					URI uri = new java.net.URI("location");
+					URI uri = new java.net.URI("../thanhtoan");
 					if(username.equals(u) && password.equals(p))
 					{
 //						emailHandler(e);
@@ -65,7 +65,7 @@ public class PaymentService {
 				try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
 			}
 
-			return Response.temporaryRedirect(new URI("location")).build();
+			return Response.temporaryRedirect(new URI("http://localhost:8080/iBankingPayment/login/")).build();
 			
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
