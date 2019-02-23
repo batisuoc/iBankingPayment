@@ -24,23 +24,29 @@ create table student (
 );
 
 create table transaction (
-	trans_id varchar(7) not null,
+	trans_id varchar(7) primary key not null,
 	send_id varchar(10) not null,
-	receive_id varchar(10) not null,
 	amount int not null,
-	primary key(trans_id, send_id, receive_id),
-	constraint fk_trans_bacc foreign key (send_id) references bank_account(bank_id),
-	constraint fk_trans_bacc2 foreign key (receive_id) references bank_account(bank_id)
+	constraint fk_trans_bacc foreign key (send_id) references bank_account(bank_id)
 );
 
-create table opt (
-	opt_code char(5) primary key not null,
+create table otp (
+	otp_code char(5) primary key not null,
 	status int not null,
-	trans_id varchar(7) not null unique,
-	constraint chk_status check(status = 0 or status = 1 or status = 2),
-	constraint fk_opt_trans foreign key (trans_id) references transaction(trans_id)
+	constraint chk_status check(status = 0 or status = 1)
+);
+
+create table trans_otp (
+	trans_id varchar(7) primary key not null,
+	otp_code char(5) not null unique,
+	constraint fk_otptrans_trans foreign key (trans_id) references transaction(trans_id),
+	constraint fk_otptrans_opt foreign key (otp_code) references otp(otp_code)
 );
 
 insert into bank_account values('batisuoc', 'Trinh Hằng Ước', '0798237964', 'zhenghengyue@gmail.com', '100000000');
+insert into bank_account values('tdtu', 'Đại học Tôn Đức Thắng', '011112225', 'pdh@tdt.edu.vn', '500000');
 
 insert into account values('batisuoc', '123456');
+insert into account values('tdtu', 'tdtu1997');
+
+insert into student values('batisuoc', '51503032', 7000000);
