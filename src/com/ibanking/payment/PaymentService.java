@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
 
 @Path("/payment/")
 public class PaymentService {
+	private DBConnectionManager dbc = null;
+	
 	private Session setEmailSession(String email)
 	{
 		final String username = "batisuoc@gmail.com";//Change to your email
@@ -114,6 +116,7 @@ public class PaymentService {
 			return false;
 		}
 	}
+	
 	@GET
 	@Path("/get-datetime")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -135,11 +138,9 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				String connectionUrl = "jdbc:mysql://localhost:3306/iBankingPayment";
-				String connectionUser = "root";
-				String connectionPassword = "";
-				conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
+
+				dbc = new DBConnectionManager();
+				conn = dbc.getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM account");
 				System.out.println("connect");
@@ -184,6 +185,7 @@ public class PaymentService {
 		// Instead of returning boolean value, you can redirect client to another site if successfully signed in.
 		// return Response.temporaryRedirect(new URI("http://localhost:8081/ibanking/")).build();
 	}
+	
 	@POST
 	@Path("/get-data/{username}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -195,12 +197,8 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				String connectionUrl = "jdbc:mysql://localhost:3306/iBankingPayment";
-				String connectionUser = "root";
-				String connectionPassword = "";
-				System.out.println("eeee");
-				conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
+				dbc = new DBConnectionManager();
+				conn = dbc.getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT *"
 						+ "FROM bank_account"
@@ -248,12 +246,8 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				String connectionUrl = "jdbc:mysql://localhost:3306/iBankingPayment";
-				String connectionUser = "root";
-				String connectionPassword = "";
-				System.out.println("bbbb");
-				conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
+				dbc = new DBConnectionManager();
+				conn = dbc.getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT *"
 						+ "FROM student"
