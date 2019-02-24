@@ -17,8 +17,8 @@ import java.net.URISyntaxException;
 public class PaymentService {
 	private Session setEmailSession(String email)
 	{
-		final String username = "batisuoc@gmail.com";//Change to your email
-		final String password = "619BatisUoc";//Change to your email password
+		final String username = "hongloc2206@gmail.com";//Change to your email
+		final String password = "kimthuong1125";//Change to your email password
 
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
@@ -56,40 +56,22 @@ public class PaymentService {
         return String.valueOf(otp); 
 	}
 	
-	private void emailHandler(String email)
-	{
-		try {
-
-			Message message = new MimeMessage(setEmailSession(email));
-			message.setFrom(new InternetAddress("batisuoc@gmail.com"));
-			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-			message.setSubject("Login Confirmation on DHPIT iBanking on " + getDatetime());
-			message.setText("Dear " + email + ","
-					+ "\n\nThis email is to announce that your username/password has been signed in to iBanking website on " + getDatetime() + "."
-					+ "\n\nRegards,"
-					+ "\niBanking.");
-
-			Transport.send(message);
-
-			System.out.println("Done");
-
-		} catch (MessagingException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	
 	
 	@POST
-	@Path("/sendOTPcode")
+	@Path("/sendOTPcode/{email}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean sendOPT(@FormParam("email") String email)
+	public boolean sendOPT(@PathParam("email") String email)
 	{
+		
 		Session temp = setEmailSession(email);
 		if(temp != null)
-		{
+		{	
+			System.out.println("abc");
 			String otpCode = OTP(5);
 			try {
-
+				System.out.println("ef");
 				Message message = new MimeMessage(temp);
 				message.setFrom(new InternetAddress("batisuoc@gmail.com"));
 				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
@@ -114,15 +96,7 @@ public class PaymentService {
 			return false;
 		}
 	}
-	@GET
-	@Path("/get-datetime")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String getDatetime()
-	{
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyy hh:mm:ss aa");
-		Date date = new Date();
-		return dateFormat.format(date);
-	}
+	
 	
 	@POST
 	@Path("/sign-in/")
@@ -142,25 +116,14 @@ public class PaymentService {
 				conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM account");
-				System.out.println("connect");
 				while (rs.next())
 				{
 					// Write your code here
 					String u = rs.getString("bank_id");
 					String p = rs.getString("password");
-					URI uri = new java.net.URI("../thanhtoan");
 					if(username.equals(u) && password.equals(p))
 					{
-//						emailHandler(e);
-						System.out.println("asd");
-						/*rs = stmt.executeQuery("select *"
-								+ "from bank_account"
-								+ "join account"
-								+ "on bank_account.bank_id = account.bank_id"
-								+ "");*/
 						return true;
-					
-						//return Response.temporaryRedirect(uri).build();
 					}
 				}
 				conn.close();
@@ -171,13 +134,9 @@ public class PaymentService {
 				try { if (stmt != null) stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
 				try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
 			}
-
-			//return Response.temporaryRedirect(new URI("http://localhost:8080/iBankingPayment/login/")).build();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//return null;
 		System.out.println(username+""+password);
 		return false;
 		
@@ -199,7 +158,6 @@ public class PaymentService {
 				String connectionUrl = "jdbc:mysql://localhost:3306/iBankingPayment";
 				String connectionUser = "root";
 				String connectionPassword = "";
-				System.out.println("eeee");
 				conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT *"
@@ -212,7 +170,6 @@ public class PaymentService {
 					String u = rs.getString("bank_id");
 					if(id.equals(u))
 					{
-						System.out.println("asd");
 						bankAccount.setBankId(rs.getString("bank_id"));
 						bankAccount.setName(rs.getString("name"));
 						bankAccount.setPhone(rs.getInt("phone"));
@@ -258,8 +215,6 @@ public class PaymentService {
 				rs = stmt.executeQuery("SELECT *"
 						+ "FROM student"
 								);
-				System.out.println("connect");
-				System.out.println(st_id);
 				while (rs.next())
 				{
 					// Write your code here

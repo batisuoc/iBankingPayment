@@ -57,6 +57,28 @@
 		curl_close($ch);
 		$resp=json_decode($resp);
 	}
+	if(isset($_POST['submit'])&&!empty($data->email)){
+			$_POST['email']=$data->email;
+			
+			$curl = curl_init();
+			$url="http://localhost:8080/iBankingPayment/rest/payment/sendOTPcode/".$data->email;
+
+			curl_setopt($curl, CURLOPT_URL, $url);
+			curl_setopt($curl, CURLOPT_POST, 1);
+			
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
+		    $resp2 = curl_exec($curl);
+		    curl_close($curl);
+
+		    if($resp2 == "true")
+		    {
+		    	header("location: otpVerify.php");
+		    	die();
+		    } else {
+		    	header("location: payment.php");
+		    }
+	}
   ?>
   
   <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" id="myForm">
@@ -79,7 +101,7 @@
 	<br/><br/>
 	<p>So du kha dung >= so tien can chuyen</p>
 	<br></br>
-	<input type="submit" name="submit" <?php if(empty($resp)) echo 'disabled="true"';else echo 'disabled="disabled"';	?> value="Submit"/>
+	<input type="submit" name="submit"  value="Submit"/>
   </form>
   
   <p>
