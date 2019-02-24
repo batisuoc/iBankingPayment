@@ -15,7 +15,105 @@ import java.net.URISyntaxException;
 
 @Path("/payment/")
 public class PaymentService {
+	private Session setEmailSession(String email)
+	{
+		final String username = "batisuoc@gmail.com";//Change to your email
+		final String password = "619BatisUoc";//Change to your email password
+
+		Properties props = new Properties();
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", "587");
+
+		Session session = Session.getDefaultInstance(props,
+			new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password);
+				}
+			});
+		return session;
+	}
 	
+	public String OTP(int leng)
+	{
+		// Using numeric values 
+        String numbers = "0123456789"; 
+  
+        // Using random method 
+        Random rndm_method = new Random(); 
+  
+        char[] otp = new char[leng]; 
+  
+        for (int i = 0; i < leng; i++) 
+        { 
+            // Use of charAt() method : to get character value 
+            // Use of nextInt() as it is scanning the value as int 
+        	otp[i] = numbers.charAt(rndm_method.nextInt(numbers.length())); 
+        }
+        
+        return String.valueOf(otp); 
+	}
+	
+	private void emailHandler(String email)
+	{
+		try {
+
+			Message message = new MimeMessage(setEmailSession(email));
+			message.setFrom(new InternetAddress("batisuoc@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+			message.setSubject("Login Confirmation on DHPIT iBanking on " + getDatetime());
+			message.setText("Dear " + email + ","
+					+ "\n\nThis email is to announce that your username/password has been signed in to iBanking website on " + getDatetime() + "."
+					+ "\n\nRegards,"
+					+ "\niBanking.");
+
+			Transport.send(message);
+
+			System.out.println("Done");
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@POST
+	@Path("/sendOTPcode")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean sendOPT(@FormParam("email") String email)
+	{
+		Session temp = setEmailSession(email);
+		if(temp != null)
+		{
+			String otpCode = OTP(5);
+			try {
+
+				Message message = new MimeMessage(temp);
+				message.setFrom(new InternetAddress("batisuoc@gmail.com"));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+				message.setSubject("OTP verify code");
+				message.setText("Dear " + email + ","
+						+ "\n\n Your verify code is " + otpCode + " ."
+						+ "\n\nRegards,"
+						+ "\niBanking.");
+
+				Transport.send(message);
+
+				System.out.println("Done");
+
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}
+			
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	@GET
 	@Path("/get-datetime")
 	@Produces(MediaType.TEXT_PLAIN)
