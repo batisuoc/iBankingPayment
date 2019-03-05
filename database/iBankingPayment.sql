@@ -33,6 +33,7 @@ create table transaction (
 create table otp (
 	otp_code char(5) primary key not null,
 	status int not null,
+	init_time datetime not null,
 	constraint chk_status check(status = 0 or status = 1)
 );
 
@@ -44,6 +45,7 @@ create table trans_otp (
 );
 
 insert into bank_account values('batisuoc', 'Trinh Hằng Ước', '0798237964', 'zhenghengyue@gmail.com', '100000000');
+insert into bank_account values('loc', 'Nguyễn Hông Lộc', '0112211221', 'batisuoc@gmail.com', '100000000');
 insert into bank_account values('tdtu', 'Đại học Tôn Đức Thắng', '011112225', 'pdh@tdt.edu.vn', '500000');
 
 insert into account values('batisuoc', '123456');

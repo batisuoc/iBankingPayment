@@ -70,10 +70,10 @@ public class PaymentService {
 		Session temp = setEmailSession(email);
 		if(temp != null)
 		{	
-			System.out.println("abc");
+//			System.out.println("abc");
 			String otpCode = OTP(5);
 			try {
-				System.out.println("ef");
+//				System.out.println("ef");
 				Message message = new MimeMessage(temp);
 				message.setFrom(new InternetAddress("batisuoc@gmail.com"));
 				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
@@ -84,8 +84,7 @@ public class PaymentService {
 						+ "\niBanking.");
 
 				Transport.send(message);
-
-				System.out.println("Done");
+//				System.out.println("Done");
 
 			} catch (MessagingException e) {
 				throw new RuntimeException(e);
@@ -99,7 +98,6 @@ public class PaymentService {
 		}
 	}
 	
-<<<<<<< HEAD
 	@GET
 	@Path("/get-datetime")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -109,8 +107,6 @@ public class PaymentService {
 		Date date = new Date();
 		return dateFormat.format(date);
 	}
-=======
->>>>>>> 7ef3f954465f8a53a22aacd14733f8d3501065ea
 	
 	@POST
 	@Path("/sign-in/")
@@ -167,16 +163,13 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-<<<<<<< HEAD
 				dbc = new DBConnectionManager();
 				conn = dbc.getConnection();
-=======
 				Class.forName("com.mysql.jdbc.Driver");
 				String connectionUrl = "jdbc:mysql://localhost:3306/iBankingPayment";
 				String connectionUser = "root";
 				String connectionPassword = "";
 				conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
->>>>>>> 7ef3f954465f8a53a22aacd14733f8d3501065ea
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT *"
 						+ "FROM bank_account"
