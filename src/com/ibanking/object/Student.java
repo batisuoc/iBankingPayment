@@ -1,4 +1,4 @@
-package com.ibanking.payment;
+package com.ibanking.object;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

@@ -6,6 +6,10 @@ import java.util.Date;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+
+import com.ibanking.database.DBConnectionManager;
+import com.ibanking.object.*;
+
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.sql.*;
@@ -15,7 +19,7 @@ import java.net.URISyntaxException;
 
 @Path("/payment/")
 public class PaymentService {
-	private DBConnectionManager dbc = null;
+	private DBConnectionManager dbConnection = null;
 	
 	private Session setEmailSession(String email)
 	{
@@ -38,7 +42,7 @@ public class PaymentService {
 		return session;
 	}
 	
-	public String OTP(int leng)
+	public String createOTP(int leng)
 	{
 		// Using numeric values 
         String numbers = "0123456789"; 
@@ -58,20 +62,18 @@ public class PaymentService {
         return String.valueOf(otp); 
 	}
 	
-	
-	
 	@POST
 	@Path("/sendOTPcode/{email}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean sendOPT(@PathParam("email") String email)
+	public boolean sendOTP(@PathParam("email") String email)
 	{
 		
 		Session temp = setEmailSession(email);
 		if(temp != null)
 		{	
 //			System.out.println("abc");
-			String otpCode = OTP(5);
+			String otpCode = createOTP(5);
 			try {
 //				System.out.println("ef");
 				Message message = new MimeMessage(temp);
@@ -85,11 +87,9 @@ public class PaymentService {
 
 				Transport.send(message);
 //				System.out.println("Done");
-
 			} catch (MessagingException e) {
 				throw new RuntimeException(e);
 			}
-			
 			return true;
 		}
 		else
@@ -119,9 +119,8 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-
-				dbc = new DBConnectionManager();
-				conn = dbc.getConnection();
+				dbConnection = new DBConnectionManager();
+				conn = dbConnection.getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM account");
 				while (rs.next())
@@ -145,7 +144,7 @@ public class PaymentService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(username+""+password);
+//		System.out.println(username+""+password);
 		return false;
 		
 		// Instead of returning boolean value, you can redirect client to another site if successfully signed in.
@@ -163,18 +162,11 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				dbc = new DBConnectionManager();
-				conn = dbc.getConnection();
-				Class.forName("com.mysql.jdbc.Driver");
-				String connectionUrl = "jdbc:mysql://localhost:3306/iBankingPayment";
-				String connectionUser = "root";
-				String connectionPassword = "";
-				conn = DriverManager.getConnection(connectionUrl, connectionUser, connectionPassword);
+				dbConnection = new DBConnectionManager();
+				conn = dbConnection.getConnection();
 				stmt = conn.createStatement();
-				rs = stmt.executeQuery("SELECT *"
-						+ "FROM bank_account"
-								);
-				System.out.println("connect");
+				rs = stmt.executeQuery("SELECT * FROM bank_account;");
+//				System.out.println("connect");
 				while (rs.next())
 				{
 					// Write your code here
@@ -204,24 +196,23 @@ public class PaymentService {
 		
 		return bankAccount;
 	}
+	
 	@POST
 	@Path("/get-fee/{student_id}/")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Student getFee(@PathParam("student_id") int st_id) {
 		Student st = new Student();
-		System.out.println(st_id);
+//		System.out.println(st_id);
 		try {
 			Connection conn = null;
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				dbc = new DBConnectionManager();
-				conn = dbc.getConnection();
+				dbConnection = new DBConnectionManager();
+				conn = dbConnection.getConnection();
 				stmt = conn.createStatement();
-				rs = stmt.executeQuery("SELECT *"
-						+ "FROM student"
-								);
+				rs = stmt.executeQuery("SELECT * FROM student");
 				while (rs.next())
 				{
 					// Write your code here

@@ -7,8 +7,8 @@ public class TestFunction {
 
 	public static void main(String[] args){
 		// TODO Auto-generated method stub
-		PaymentService payServices = new PaymentService();
-		System.out.println(payServices.OTP(5));
+//		PaymentService payServices = new PaymentService();
+//		System.out.println(payServices.createOTP(5));
 	}
 
 }

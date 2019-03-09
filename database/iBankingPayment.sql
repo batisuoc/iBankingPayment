@@ -45,10 +45,10 @@ create table trans_otp (
 );
 
 insert into bank_account values('batisuoc', 'Trinh Hằng Ước', '0798237964', 'zhenghengyue@gmail.com', '100000000');
-insert into bank_account values('loc', 'Nguyễn Hông Lộc', '0112211221', 'batisuoc@gmail.com', '100000000');
-insert into bank_account values('tdtu', 'Đại học Tôn Đức Thắng', '011112225', 'pdh@tdt.edu.vn', '500000');
+insert into bank_account values('loc', 'Nguyễn Hông Lộc', '0112211221', 'batisuoc@gmail.com', '50000000');
 
 insert into account values('batisuoc', '123456');
-insert into account values('tdtu', 'tdtu1997');
+insert into account values('loc', 'locyolo');
 
 insert into student values('batisuoc', '51503032', 7000000);
+insert into student values('loc', '51503135', 7000000);

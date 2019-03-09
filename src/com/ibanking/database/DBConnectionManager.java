@@ -1,4 +1,4 @@
-package com.ibanking.payment;
+package com.ibanking.database;
 
 import java.sql.*;
 
