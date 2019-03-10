@@ -25,12 +25,11 @@ if(empty($_SESSION)){
 			cursor: pointer;
 		}
 	</style>
-
+	<!-- autocomplete School Fee  -->
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#student_id').change(function() {
 				var studentID = document.getElementById('student_id').value;
-				// location.replace("loadSchoolFee.php?stuID=" + studentID);
 				var xmlhttp = new XMLHttpRequest();
 				var studentData;
 				xmlhttp.onreadystatechange = function () {
@@ -57,7 +56,7 @@ if(empty($_SESSION)){
 	</p>
 
 	<?php
-	$url = "http://localhost:8080/iBankingPayment/rest/payment/get-data/" . $_SESSION['username'];
+	$url = "http://localhost:8080/iBankingPayment/rest/payment/get-data/".$_SESSION['username'];
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_POST, 1);
@@ -88,31 +87,29 @@ if(empty($_SESSION)){
 			header("location: otpVerify.php");
 			die();
 		} else {
-			header("location: payment.php");
+			header("location: ci.php");
 		}
 	}
 	?>
 
 	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" id="myForm">
-		<input type="text" placeholder="Name" name="name" disabled value="<?php echo $data->name ?>"/>
+		<input type="text" id="name" name="name" disabled value="<?php echo $data->name ?>"/>
 		<br/><br/>
-		<input type="text" placeholder="Phone" name="phone" disabled value="<?php echo $data->phone ?>"/>
+		<input type="text" id="phone" name="phone" disabled value="<?php echo $data->phone ?>"/>
 		<br/><br/>
-		<input type="text" placeholder="Email" name="email" disabled value="<?php echo $data->email ?>"/>
+		<input type="text" id="email" name="email" disabled value="<?php echo $data->email ?>"/>
 		<br/><br/>
-		<input type="text" placeholder="Student_ID" id="student_id" name="student_id"/>
+		<input type="text" placeholder="Hãy nhập mã sinh viên" id="student_id" name="student_id"/>
 		<br/><br/>
-		<input type="text" id="school_fee" name="school_fee" disabled/>
+		<input type="text" placeholder="Số tiền cần nộp" id="school_fee" name="school_fee" disabled/>
 		<br/><br/>
-		<input type="text" placeholder="Balance" name="balance" disabled value="<?php echo $data->balance ?>"/>
+		<input type="text" id="balance" name="balance" disabled value="<?php echo $data->balance ?>"/>
 		<br/><br/>
-		<input type="text" placeholder="So tien can chuyen" name="moneyPay" value=""/>
+		<input type="text" id="moneypay" placeholder="Số tiền cần chuyển" name="moneyPay"/>
 		<br/><br/>
-		<p>So du kha dung >= so tien can chuyen</p>
-		<br></br>
-		<input type="submit" name="submit"  value="Submit"/>
+		<p>! Lưu ý : số tiền cần nộp cần phải lớn hơn hoặc bằng tiền học phí</p>
 	</form>
-
+	<button type="submit" form="myForm" value="verify">Xác nhận</button>
 	<p>
 		Click here to clean <a href="logout.php" tite="Logout">Logout</a>
 	</p>

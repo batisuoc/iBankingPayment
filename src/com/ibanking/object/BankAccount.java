@@ -6,13 +6,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class BankAccount {
 	private String bankId;
 	private String name;
-	private int phone;
+	private String phone;
 	private String email;
 	private int balance;
 	public BankAccount() {
 		
 	}
-	public BankAccount(String bankId, String name, int phone, String email, int balance) {
+	public BankAccount(String bankId, String name, String phone, String email, int balance) {
 		this.bankId=bankId;
 		this.name=name;
 		this.phone=phone;
@@ -31,10 +31,10 @@ public class BankAccount {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getPhone() {
+	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(int phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 	public String getEmail() {

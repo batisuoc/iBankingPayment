@@ -23,12 +23,12 @@ public class PaymentService {
 	
 	private Session setEmailSession(String email)
 	{
-		final String username = "hongloc2206@gmail.com";//Change to your email
-		final String password = "kimthuong1125";//Change to your email password
+		final String username = "batisuoc@gmail.com";//Change to your email
+		final String password = "619BatisUoc";//Change to your email password
 
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.port", "587");
 		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", "587");
@@ -68,11 +68,10 @@ public class PaymentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean sendOTP(@PathParam("email") String email)
 	{
-		
 		Session temp = setEmailSession(email);
 		if(temp != null)
 		{	
-//			System.out.println("abc");
+			System.out.println("abc");
 			String otpCode = createOTP(5);
 			try {
 //				System.out.println("ef");
@@ -119,8 +118,7 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				dbConnection = new DBConnectionManager();
-				conn = dbConnection.getConnection();
+				conn = new DBConnectionManager().getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM account");
 				while (rs.next())
@@ -162,8 +160,7 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				dbConnection = new DBConnectionManager();
-				conn = dbConnection.getConnection();
+				conn = new DBConnectionManager().getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM bank_account;");
 //				System.out.println("connect");
@@ -175,7 +172,7 @@ public class PaymentService {
 					{
 						bankAccount.setBankId(rs.getString("bank_id"));
 						bankAccount.setName(rs.getString("name"));
-						bankAccount.setPhone(rs.getInt("phone"));
+						bankAccount.setPhone(rs.getString("phone"));
 						bankAccount.setEmail(rs.getString("email"));
 						bankAccount.setBalance(rs.getInt("balance"));
 						return bankAccount;
@@ -209,8 +206,7 @@ public class PaymentService {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
-				dbConnection = new DBConnectionManager();
-				conn = dbConnection.getConnection();
+				conn = new DBConnectionManager().getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM student");
 				while (rs.next())

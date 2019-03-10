@@ -43,7 +43,7 @@
 		?>
 		
 		<div class="login-page">
-			<div class="form">   		
+			<div class="form-horizontal">   		
 				<form class="login-form" method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
 					<p>
 						Username: <input type="text" placeholder="username" name="username" required autofocus/>
@@ -52,7 +52,7 @@
 					<p>
 						Password: <input type="password" placeholder="password" name="password" required/>
 					</p>
-					<input type="submit" name="login"></input>
+					<input type="submit" name="login" value="Đăng nhập"></input>
 					<h4>
 						<?php echo $msg; ?>
 					</h4>

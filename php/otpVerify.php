@@ -5,7 +5,7 @@
 </head>
 <body>
 	<form action="#" method="post">
-		Email : <input type="text" name="otp" placeholder="Enter your otp code">
+		<input type="text" name="otp" placeholder="Enter your otp code">
 		<button type="submit" name="verify">
 			Verify
 		</button>
