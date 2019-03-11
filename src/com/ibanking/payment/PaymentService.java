@@ -14,13 +14,16 @@ import com.ibanking.object.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.sql.*;
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+//import java.io.*;
+//import java.net.URI;
+//import java.net.URISyntaxException;
 
 @Path("/payment/")
 public class PaymentService {
-	private DBConnectionManager dbConnection = null;
+	private Statement stmt = null;
+	private ResultSet rs = null;
+	private Connection conn = null;
+	private PreparedStatement pstmt = null;
 	
 	private Session setEmailSession(String email)
 	{
@@ -116,11 +119,8 @@ public class PaymentService {
 	public boolean signIn(@FormParam("username") String username, @FormParam("password") String password)
 	{
 		try {
-			Connection conn = null;
-			Statement stmt = null;
-			ResultSet rs = null;
 			try {
-				conn = new DBConnectionManager().getConnection();
+				conn  = new DBConnectionManager().getConnection();
 				stmt = conn.createStatement();
 				rs = stmt.executeQuery("SELECT * FROM account");
 				while (rs.next())
@@ -158,9 +158,6 @@ public class PaymentService {
 	public BankAccount getBankAccount(@PathParam("username") String id) {
 		BankAccount bankAccount = new BankAccount();
 		try {
-			Connection conn = null;
-			Statement stmt = null;
-			ResultSet rs = null;
 			try {
 				conn = new DBConnectionManager().getConnection();
 				stmt = conn.createStatement();
@@ -191,7 +188,7 @@ public class PaymentService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(id);
+//		System.out.println(id);
 		
 		return bankAccount;
 	}
@@ -204,9 +201,6 @@ public class PaymentService {
 		Student st = new Student();
 //		System.out.println(st_id);
 		try {
-			Connection conn = null;
-			Statement stmt = null;
-			ResultSet rs = null;
 			try {
 				conn = new DBConnectionManager().getConnection();
 				stmt = conn.createStatement();
@@ -236,31 +230,31 @@ public class PaymentService {
 		return st;
 	}
 	
-	//Insert otpcode into otp and send mail
-	@POST
-	@Path("/sendOTPcode/{email}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public void sendOTP2(@PathParam("email") String email)
+	private boolean insertOTPcode(String otpCode)
+	{
+		try {
+			Connection conn = new DBConnectionManager().getConnection();
+			String sql = "insert into otp values(?,?,?)";
+			PreparedStatement stm = conn.prepareStatement(sql);
+			stm.setString(1, otpCode);
+			stm.setInt(2,0);
+			stm.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+			stm.execute();
+			conn.close();
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean sendOTPcode(String email, String otpCode)
 	{
 		Session temp = setEmailSession(email);
 		if(temp != null)
 		{	
-			String otpCode = createOTP(5);
 			try {
-				try {
-				Connection conn = new DBConnectionManager().getConnection();
-				String sql = "insert into otp values(?,?,?)";
-				PreparedStatement stm = conn.prepareStatement(sql);
-				stm.setString(1, otpCode);
-				stm.setInt(2,0);
-				stm.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-				stm.execute();
-				conn.close();
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
 				Message message = new MimeMessage(temp);
 				message.setFrom(new InternetAddress("hongloc2206@gmail.com"));
 				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
@@ -271,11 +265,31 @@ public class PaymentService {
 						+ "\niBanking.");
 				
 				Transport.send(message);
-				System.out.println("Done");
+//				System.out.println("Done");
+				return true;
 			} catch (MessagingException e) {
-				throw new RuntimeException(e);
+				e.printStackTrace();
+				return false;
 			}	
 		}
+		else {
+			return false;
+		}
+	}
+	
+	//Insert otpcode into otp and send mail
+	@POST
+	@Path("/send_and_check_otp/{email}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean checkInsertSendOTP(@PathParam("email") String email)
+	{
+		String otpCode = createOTP(5);
+		if(sendOTPcode(email, otpCode) && insertOTPcode(otpCode))
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	@POST
@@ -287,8 +301,8 @@ public class PaymentService {
 			Connection conn = null;
 			try {
 				conn = new DBConnectionManager().getConnection();
-				PreparedStatement stm = conn.prepareStatement("select * from otp where otp_code='"+otpcode+"'");
-				ResultSet rs = stm.executeQuery();
+				pstmt = conn.prepareStatement("select * from otp where otp_code='"+otpcode+"'");
+				rs = pstmt.executeQuery();
 				while(rs.next())
 				{	
 					if(rs.getString(1).equals(otpcode)) {
@@ -298,7 +312,7 @@ public class PaymentService {
 						int hours = seconds / 3600;
 						int minutes = (seconds % 3600) / 60;
 						if(hours == 0 && minutes < 26) {
-							stm.executeUpdate("UPDATE otp "
+							pstmt.executeUpdate("UPDATE otp "
 									+ "SET status = 1 "
 									+ "WHERE otp_code='"+otpcode+"';");
 							conn.close();
@@ -307,7 +321,9 @@ public class PaymentService {
 					}
 				}
 			}finally {
-				if (conn!=null) conn.close();
+				try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (pstmt != null) pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

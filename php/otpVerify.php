@@ -7,10 +7,8 @@
 	<title>Verify OTP Code</title>
 </head>
 <body>
-
 	<?php
 		$resp="";
-		
 		if(isset($_POST['verify']) and !empty($_POST['otp']))
 		{
 			$ch = curl_init();
@@ -21,10 +19,8 @@
 			$resp = curl_exec($ch);
 			curl_close($ch);
 			echo $resp;
-		}
-		
+		}	
     ?>
-
 
 	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
 		<input type="text" name="otp" placeholder="Enter your otp code">
