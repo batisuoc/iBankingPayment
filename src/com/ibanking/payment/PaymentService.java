@@ -9,6 +9,7 @@ import javax.ws.rs.core.*;
 
 import com.ibanking.database.DBConnectionManager;
 import com.ibanking.object.*;
+import com.scoreview.ConnectDB;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -23,12 +24,12 @@ public class PaymentService {
 	
 	private Session setEmailSession(String email)
 	{
-		final String username = "batisuoc@gmail.com";//Change to your email
-		final String password = "619BatisUoc";//Change to your email password
+		final String username = "hongloc2206@gmail.com";//Change to your email
+		final String password = "kimthuong1125";//Change to your email password
 
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.socketFactory.port", "587");
+		props.put("mail.smtp.socketFactory.port", "465");
 		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", "587");
@@ -61,7 +62,7 @@ public class PaymentService {
         
         return String.valueOf(otp); 
 	}
-	
+	/*
 	@POST
 	@Path("/sendOTPcode/{email}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -96,6 +97,7 @@ public class PaymentService {
 			return false;
 		}
 	}
+	*/
 	
 	@GET
 	@Path("/get-datetime")
@@ -233,4 +235,86 @@ public class PaymentService {
 		
 		return st;
 	}
+	
+	//Insert otpcode into otp and send mail
+	@POST
+	@Path("/sendOTPcode/{email}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void sendOTP2(@PathParam("email") String email)
+	{
+		Session temp = setEmailSession(email);
+		if(temp != null)
+		{	
+			String otpCode = createOTP(5);
+			try {
+				try {
+				Connection conn = new DBConnectionManager().getConnection();
+				String sql = "insert into otp values(?,?,?)";
+				PreparedStatement stm = conn.prepareStatement(sql);
+				stm.setString(1, otpCode);
+				stm.setInt(2,0);
+				stm.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+				stm.execute();
+				conn.close();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				Message message = new MimeMessage(temp);
+				message.setFrom(new InternetAddress("hongloc2206@gmail.com"));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+				message.setSubject("OTP verify code");
+				message.setText("Dear " + email + ","
+						+ "\n\n Your verify code is " + otpCode + " ."
+						+ "\n\nRegards,"
+						+ "\niBanking.");
+				
+				Transport.send(message);
+				System.out.println("Done");
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}	
+		}
+	}
+	
+	@POST
+	@Path("/verifyOTP/{otpcode}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String verifyOTP(@PathParam("otpcode") String otpcode) {
+		try {
+			Connection conn = null;
+			try {
+				conn = new DBConnectionManager().getConnection();
+				PreparedStatement stm = conn.prepareStatement("select * from otp where otp_code='"+otpcode+"'");
+				ResultSet rs = stm.executeQuery();
+				while(rs.next())
+				{	
+					if(rs.getString(1).equals(otpcode)) {
+						Timestamp temporary = new Timestamp(System.currentTimeMillis());
+						long milliseconds = temporary.getTime() - rs.getTimestamp(3).getTime();
+						int seconds = (int) milliseconds / 1000;
+						int hours = seconds / 3600;
+						int minutes = (seconds % 3600) / 60;
+						if(hours == 0 && minutes < 26) {
+							stm.executeUpdate("UPDATE otp "
+									+ "SET status = 1 "
+									+ "WHERE otp_code='"+otpcode+"';");
+							conn.close();
+							return "Success verify otp";
+						}
+					}
+				}
+			}finally {
+				if (conn!=null) conn.close();
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "Qua thoi gian 25p hoac OTP Khong dung";
+	}
+	
+	
+
 }
