@@ -9,7 +9,7 @@ import javax.ws.rs.core.*;
 
 import com.ibanking.database.DBConnectionManager;
 import com.ibanking.object.*;
-import com.scoreview.ConnectDB;
+
 
 import javax.mail.*;
 import javax.mail.internet.*;

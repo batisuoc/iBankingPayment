@@ -65,10 +65,12 @@ if(empty($_SESSION)){
 	$data = curl_exec($ch);
 	curl_close($ch);
 	$data = json_decode($data);
+	
 	?>
 
 	<?php
 	if(isset($_POST['submit'])&&!empty($data->email)){
+		
 		$_POST['email']=$data->email;
 
 		$curl = curl_init();
@@ -79,20 +81,17 @@ if(empty($_SESSION)){
 
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
-		$resp2 = curl_exec($curl);
+		curl_exec($curl);
 		curl_close($curl);
-
-		if($resp2 == "true")
-		{
-			header("location: otpVerify.php");
-			die();
-		} else {
-			header("location: ci.php");
-		}
+		header("location: otpVerify.php");
+		die();
+		
 	}
 	?>
+	
 
-	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" id="myForm">
+
+	<form  method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
 		<input type="text" id="name" name="name" disabled value="<?php echo $data->name ?>"/>
 		<br/><br/>
 		<input type="text" id="phone" name="phone" disabled value="<?php echo $data->phone ?>"/>
@@ -108,8 +107,8 @@ if(empty($_SESSION)){
 		<input type="text" id="moneypay" placeholder="Số tiền cần chuyển" name="moneyPay"/>
 		<br/><br/>
 		<p>! Lưu ý : số tiền cần nộp cần phải lớn hơn hoặc bằng tiền học phí</p>
+		<input type="submit" name="submit" value="submit"/>
 	</form>
-	<button type="submit" form="myForm" value="verify">Xác nhận</button>
 	<p>
 		Click here to clean <a href="logout.php" tite="Logout">Logout</a>
 	</p>
