@@ -1,15 +1,16 @@
 <?php
 
-ob_start();
 session_start();
 
 if(isset($_POST['submit']))
 {
-	if(isset($_POST['email']) && isset($_POST['student_id']) && isset($_POST['school_fee']) && isset($_POST['moneypay'])){
+	if(isset($_POST['email']) && isset($_POST['student_id']) && isset($_POST['school_fee']) && isset($_POST['moneypay']) && isset($_POST['balance'])){
 
-		$_SESSION['email'] = $_POST['email'];
+		$_SESSION['email'] 		= $_POST['email'];
 		$_SESSION['student_id'] = $_POST['student_id'];
-		$_SESSION['school_fee']	= $_POST['moneypay'];
+		$_SESSION['moneypay']	= $_POST['moneypay'];
+		$_SESSION['balance']	= $_POST['balance'];
+
 		$curl = curl_init();
 		$url="http://localhost:8080/iBankingPayment/rest/payment/send_and_check_otp/".$_SESSION['email'];
 
