@@ -277,6 +277,120 @@ public class PaymentService {
 		}
 	}
 	
+	public boolean sendVerifySuccessfulEmail(String email)
+	{
+		Session temp = setEmailSession(email);
+		if(temp != null)
+		{	
+			try {
+				Message message = new MimeMessage(temp);
+				message.setFrom(new InternetAddress("hongloc2206@gmail.com"));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+				message.setSubject("Transaction verify successful");
+				message.setText("Dear " + email + ","
+						+ "\n\n Your transaction verify successfully ."
+						+ "\n\nRegards,"
+						+ "\niBanking.");
+				
+				Transport.send(message);
+//				System.out.println("Done");
+				return true;
+			} catch (MessagingException e) {
+				e.printStackTrace();
+				return false;
+			}	
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public boolean updateSchoolFee(String student_id, String username)
+	{
+		try {
+			try {
+				conn = new DBConnectionManager().getConnection();
+				pstmt = conn.prepareStatement("select * from student where student_id='"+student_id+"';");
+				rs = pstmt.executeQuery();
+				while(rs.next())
+				{	
+					if(rs.getString(1).equals(username) && rs.getString(2).equals(student_id)) {
+						
+							pstmt.executeUpdate("UPDATE student "
+									+ "SET school_fee = 0"  
+									+ " WHERE student_id='"+student_id+"';");
+							return true;
+						
+					}
+				}
+			}finally {
+				try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (pstmt != null) pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean updateBalance(String username, int balance, int sended_money)
+	{
+		int updateBalance = balance - sended_money;
+		try {
+			try {
+				conn = new DBConnectionManager().getConnection();
+				pstmt = conn.prepareStatement("select * from bank_account where bank_id='"+username+"';");
+				rs = pstmt.executeQuery();
+				while(rs.next())
+				{	
+					if(rs.getString(1).equals(username)) {
+						
+							pstmt.executeUpdate("UPDATE bank_account "+ "SET balance = "+ updateBalance + " WHERE bank_id='"+username+"';");
+							return true;
+						
+					}
+				}
+			}finally {
+				try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (pstmt != null) pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean updateOTPstatus(String otpCode)
+	{
+		try {
+			try {
+				conn = new DBConnectionManager().getConnection();
+				pstmt = conn.prepareStatement("select * from otp where otp_code='"+otpCode+"'");
+				rs = pstmt.executeQuery();
+				while(rs.next())
+				{	
+					if(rs.getString(1).equals(otpCode)) {
+						
+							pstmt.executeUpdate("UPDATE otp "
+									+ "SET status = 1 "
+									+ "WHERE otp_code='"+otpCode+"';");
+							return true;
+						
+					}
+				}
+			}finally {
+				try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (pstmt != null) pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+				try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	//Insert otpcode into otp and send mail
 	@POST
 	@Path("/send_and_check_otp/{email}")
@@ -296,9 +410,8 @@ public class PaymentService {
 	@Path("/verifyOTP/{otpcode}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String verifyOTP(@PathParam("otpcode") String otpcode) {
+	public boolean verifyOTP(@PathParam("otpcode") String otpcode) {
 		try {
-			Connection conn = null;
 			try {
 				conn = new DBConnectionManager().getConnection();
 				pstmt = conn.prepareStatement("select * from otp where otp_code='"+otpcode+"'");
@@ -312,11 +425,7 @@ public class PaymentService {
 						int hours = seconds / 3600;
 						int minutes = (seconds % 3600) / 60;
 						if(hours == 0 && minutes < 26) {
-							pstmt.executeUpdate("UPDATE otp "
-									+ "SET status = 1 "
-									+ "WHERE otp_code='"+otpcode+"';");
-							conn.close();
-							return "Success verify otp";
+							return true;
 						}
 					}
 				}
@@ -328,9 +437,28 @@ public class PaymentService {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "Qua thoi gian 25p hoac OTP Khong dung";
+		return false;
 	}
 	
-	
+	@POST
+	@Path("/afterVerifyOTP/{username}/{student_id}/{email}/{moneypay}/{balance}/{otp}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean afterOTPverifyAction(@PathParam("username") String username, @PathParam("student_id") String student_id, 
+			@PathParam("email") String email, @PathParam("moneypay") int sended_money, @PathParam("balance") int balance, 
+			@PathParam("otp") String otpCode)
+	{
+		if(updateBalance(username, balance, sended_money) && updateSchoolFee(student_id, username))
+		{
+			if(sendVerifySuccessfulEmail(email))
+			{
+				if(updateOTPstatus(otpCode))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 }
