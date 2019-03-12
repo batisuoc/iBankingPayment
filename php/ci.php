@@ -91,30 +91,50 @@ if(empty($_SESSION)){
 </head>
 
 <body style="font-size:125%;font-family:Arial, Helvetica, sans-serif;" onload="getBankAccountData()">
-	<h1>Thanh toan</h1>
+	
 
-	<p>
-		Welcome <em><?php echo $_SESSION['username']; ?></em> to the portal!
-	</p>
+	
 
-	<form action="sendEmail_storeSession.php" method="post" id="myForm">
-		<input type="text" id="realname" name="realname" readonly required/>
-		<br/><br/>
-		<input type="text" id="phone" name="phone" readonly required/>
-		<br/><br/>
-		<input type="text" id="email" name="email" readonly required/>
-		<br/><br/>
-		<input type="text" placeholder="Hãy nhập mã sinh viên" id="student_id" name="student_id" required/>
-		<br/><br/>
-		<input type="text" placeholder="Số tiền cần nộp" id="school_fee" name="school_fee" readonly required/>
-		<br/><br/>
-		<input type="text" id="balance" name="balance" readonly required/>
-		<br/><br/>
-		<input type="text" id="moneypay" placeholder="Hãy nhập số tiền cần chuyển" name="moneypay" required/>
-		<br/><br/>
-		<input type="submit" name="submit" value="Xác nhận">
-		<p class="alert-warning">! Lưu ý : số tiền cần nộp cần phải lớn hơn hoặc bằng tiền học phí</p>
-	</form>
+	<div class="container">
+		<div class="">
+			<p>
+				Welcome <em><?php echo $_SESSION['username']; ?></em> to the portal!
+			</p>
+			<h3>Thanh toán</h3>
+			<div class="card">
+				<div class="">
+					<form action="sendEmail_storeSession.php" method="post" id="myForm">
+						<div class="input-group form-group">
+							<input type="text" id="realname" name="realname" class="form-control" readonly required/>
+						</div>
+						<div class="input-group form-group">
+							<input type="text" id="phone" name="phone" class="form-control" readonly required/>
+						</div>
+						<div class="input-group form-group">
+							<input type="text" id="email" name="email" class="form-control" readonly required/>
+						</div>
+						<div class="input-group form-group">
+							<input type="text" placeholder="Hãy nhập mã sinh viên" id="student_id" name="student_id" class="form-control" required/>
+						</div>
+						<div class="input-group form-group">
+							<input type="text" placeholder="Số tiền cần nộp" id="school_fee" name="school_fee" class="form-control" readonly required/>
+						</div>
+						<div class="input-group form-group">
+							<input type="text" id="balance" name="balance" class="form-control" readonly required/>
+						</div>
+						<div class="input-group form-group">
+							<input type="text" id="moneypay" placeholder="Hãy nhập số tiền cần chuyển" name="moneypay" class="form-control" required/>
+						</div>
+						<div class="form-group">
+							<input type="submit" name="submit" value="Xác nhận" class="btn float-right login-btn"></input>
+						</div>
+						<p class="alert-warning">! Lưu ý : số tiền cần nộp cần phải lớn hơn hoặc bằng tiền học phí</p>
+					</form>
+				</div>
+				<div class="card-footer"></div>
+			</div>
+		</div>
+	</div>
 	<p>
 		Click here to <a href="logout.php" tite="Logout">Logout</a>
 	</p>
