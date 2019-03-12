@@ -31,7 +31,7 @@ create table otp (
 );
 
 create table transaction (
-	trans_id varchar(7) primary key not null,
+	trans_id int primary key not null auto_increment,
 	send_id varchar(10) not null,
 	amount int not null,
 	otp_code char(5) unique,
