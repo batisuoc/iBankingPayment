@@ -23,13 +23,6 @@ create table student (
 	constraint fk_stu_ac foreign key (bank_id) references bank_account(bank_id)
 );
 
-create table transaction (
-	trans_id varchar(7) primary key not null,
-	send_id varchar(10) not null,
-	amount int not null,
-	constraint fk_trans_bacc foreign key (send_id) references bank_account(bank_id)
-);
-
 create table otp (
 	otp_code char(5) primary key not null,
 	status int not null,
@@ -37,11 +30,13 @@ create table otp (
 	constraint chk_status check(status = 0 or status = 1)
 );
 
-create table trans_otp (
+create table transaction (
 	trans_id varchar(7) primary key not null,
-	otp_code char(5) not null unique,
-	constraint fk_otptrans_trans foreign key (trans_id) references transaction(trans_id),
-	constraint fk_otptrans_opt foreign key (otp_code) references otp(otp_code)
+	send_id varchar(10) not null,
+	amount int not null,
+	otp_code char(5) unique,
+	constraint fk_trans_bacc foreign key (send_id) references bank_account(bank_id),
+	constraint fk_trans_otp foreign key (otp_code) references otp(otp_code)
 );
 
 insert into bank_account values('batisuoc', 'Trinh Hằng Ước', '0798237964', 'zhenghengyue@gmail.com', '100000000');
