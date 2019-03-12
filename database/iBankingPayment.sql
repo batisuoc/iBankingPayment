@@ -39,8 +39,8 @@ create table transaction (
 	constraint fk_trans_otp foreign key (otp_code) references otp(otp_code)
 );
 
-insert into bank_account values('batisuoc', 'Trinh Hằng Ước', '0798237964', 'zhenghengyue@gmail.com', '100000000');
-insert into bank_account values('loc', 'Nguyễn Hông Lộc', '0112211221', 'batisuoc@gmail.com', '50000000');
+insert into bank_account values('batisuoc', 'Trinh Hằng Ước', '0798237964', 'zhenghengyue@gmail.com', 100000000);
+insert into bank_account values('loc', 'Nguyễn Hông Lộc', '0112211221', 'batisuoc@gmail.com', 50000000);
 
 insert into account values('batisuoc', '123456');
 insert into account values('loc', 'locyolo');
