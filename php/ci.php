@@ -65,6 +65,7 @@ if(empty($_SESSION)){
 			if(moneyPay < schoolFee)
 			{
 				//Write code here
+				alert("Số tiền cần chuyển phải lớn hơn hoặc bằng học phí");
 			}
 		}
 
