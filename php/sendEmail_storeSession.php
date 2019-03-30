@@ -24,10 +24,10 @@ if(isset($_POST['submit']))
 
 		if($resp == "true")
 		{
-			header("location: otpVerify.php");
+			header("location: otpVerifyPage.php");
 			die();
 		} else {
-			header("location: ci.php");
+			header("location: index.php");
 		}
 	}
 }

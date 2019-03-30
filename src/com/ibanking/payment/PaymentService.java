@@ -359,10 +359,10 @@ public class PaymentService {
 	}
 
 	@POST
-	@Path("/get-fee/{student_id}/")
+	@Path("/get-fee/{student_id}/{username}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Student getFee(@PathParam("student_id") int st_id) {
+	public Student getFee(@PathParam("student_id") int st_id, @PathParam("username") String username) {
 		Student st = new Student();
 //		System.out.println(st_id);
 		try {
@@ -372,7 +372,7 @@ public class PaymentService {
 				rs = stmt.executeQuery("SELECT * FROM student");
 				while (rs.next()) {
 					// Write your code here
-					if (st_id == (rs.getInt("student_id"))) {
+					if (st_id == (rs.getInt("student_id")) && username.equals(rs.getString("bank_id"))) {
 						st.setScFee(rs.getInt("school_fee"));
 						st.setStId(rs.getInt("student_id"));
 						return st;

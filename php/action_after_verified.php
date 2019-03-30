@@ -11,12 +11,12 @@ curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 $resp = curl_exec($ch);
 if($resp == "true")
 {
-	header("location: VerifySuccessful.php");
+	header("location: VerifySuccessfulPage.php");
 	die();
 }
 else
 {
-	header("refresh: 3; url=ci.php");
+	header("refresh: 3; url=index.php");
 	echo 'Transaction failed for some reason, please do another transaction.';
 	die();
 }
